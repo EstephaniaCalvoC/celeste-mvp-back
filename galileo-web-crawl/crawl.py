@@ -8,7 +8,7 @@ from html.parser import HTMLParser
 from urllib.parse import urlparse
 import os
 import sys
-from types import List
+from typing import List
 
 
 HTTP_URL_PATTERN = r'^http[s]{0,1}://(?!.*[#]).+$'
