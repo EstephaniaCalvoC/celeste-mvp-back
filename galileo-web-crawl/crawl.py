@@ -8,12 +8,14 @@ from html.parser import HTMLParser
 from urllib.parse import urlparse
 import os
 import sys
+from types import List
 
 
 HTTP_URL_PATTERN = r'^http[s]{0,1}://(?!.*[#]).+$'
 
 
 class HyperlinkParser(HTMLParser):
+    """Class for parsing hyperlinks from HTML."""
     
     def __init__(self):
         super().__init__()
@@ -22,7 +24,12 @@ class HyperlinkParser(HTMLParser):
         self.inside_article_tag = False
         self.skip_tag = False
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(self, tag: str, attrs: List):
+        """
+        Method called by the HTML parser when a start tag is encountered.
+        Parses the attributes of the tag to find the href attribute and add it to the hyperlinks list.
+        Also sets the inside_article_tag and skip_tag attributes if certain tags are encountered.       
+        """
         attrs = dict(attrs)
 
         if self.inside_article_tag and tag == "a" and "href" in attrs and not self.skip_tag:
@@ -38,7 +45,11 @@ class HyperlinkParser(HTMLParser):
             return
         
 
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag: str):
+        """
+        Method called by the HTML parser when an end tag is encountered.
+        Resets the inside_article_tag and skip_tag attributes if certain tags are encountered.
+        """
         if tag == "section" and self.skip_tag:
             self.skip_tag = False
             
@@ -46,9 +57,11 @@ class HyperlinkParser(HTMLParser):
             self.inside_article_tag = False
             
             
-
-def get_hyperlinks(url):
-    
+def get_hyperlinks(url: str) -> List:
+    """Get all hyperlinks from a URL.
+    :param url: The URL to get hyperlinks from.
+    :return: A list of all the hyperlinks found in the URL.
+    """
     try:
         response = requests.get(url, timeout=60)
 
@@ -67,7 +80,14 @@ def get_hyperlinks(url):
     return parser.hyperlinks
 
 
-def get_clean_link(local_domain, link):
+def get_clean_link(local_domain: str, link: str) -> str:
+    """
+    Format and validate the link correctly
+    :param local_domain: The domain to compare the link against.
+    :param link: The link to clean.
+    
+    :return: The cleaned link if it is valid, None otherwise.
+    """
     clean_link = None
 
     if re.search(HTTP_URL_PATTERN, link):
@@ -81,12 +101,27 @@ def get_clean_link(local_domain, link):
     return validate_link(clean_link) if clean_link else None
 
 
-def validate_link(clean_link):
+def validate_link(clean_link: str) -> str:
+    """
+    Run a custom validations for link
+    :param clean_link: The link to validate.
+    :return: The link if it is valid, None otherwise.
+    """
     is_valid = "edit" not in clean_link and "#" not in clean_link
     return clean_link if is_valid else None
 
 
-def get_domain_hyperlinks(local_domain, url, level=1, clean_links=[], seen=set()):
+def get_domain_hyperlinks(local_domain: str, url: str, level: int = 1, clean_links: List = [], seen: set = set()) -> List:
+    """
+    Get all hyperlinks under a domain.
+    :param local_domain: The domain to get hyperlinks from.
+    :param url: The URL to start from.
+    :param level: The number of levels to crawl.
+    :param clean_links: A list of clean links found so far.
+    :param seen: A set of all the links seen so far.
+
+    :return: A list of all the clean links found.
+    """
     if level == 0:
         return []
     
@@ -111,8 +146,13 @@ def get_domain_hyperlinks(local_domain, url, level=1, clean_links=[], seen=set()
     return list(set(clean_links))
 
 
-def crawl(url, all_levels = False, level=3):
-    
+def crawl(url: str, all_levels: bool = False, level: int = 3) -> None:
+    """
+    Crawl a domain and writing the text to file.
+    :param url: The starting URL for the web crawler.
+    :param all_levels: Whether or not to crawl all levels of the domain.
+    :param level: The number of levels to crawl.
+    """
     level = 1 if all_levels else level
     
     local_domain = urlparse(url).netloc
@@ -158,6 +198,14 @@ def crawl(url, all_levels = False, level=3):
 
 
 def main():
+    """
+    A web crawler for scraping text from a given URLs.
+    
+    Arguments:
+    - full_url (str): The starting URL for the web crawler.
+    - all_levels (int): If set to 1, the web crawler will crawl all levels of the domain.
+    - level (int): The number of levels to crawl.
+    """
     if len(sys.argv) < 4:
         print("Use mode: ./crawl.py full_ur: str all_levels: int[0, 1] level: int\n")
         return
