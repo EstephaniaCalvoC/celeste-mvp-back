@@ -17,7 +17,7 @@ def create_histogram():
     # Load the cl100k_base tokenizer which is designed to work with the ada-002 model
     tokenizer = tiktoken.get_encoding("cl100k_base")
     
-    df = pd.read_csv(os.getenv("PROCESSED_TEXTS_DIRECTORY"), index_col=0)
+    df = pd.read_csv(os.getenv("PROCESSED_TEXTS_DIRECTORY" + "scraped.csv"), index_col=0)
     df.columns = ['title', 'text']
     df['n_tokens'] = df.text.apply(lambda x: len(tokenizer.encode(x)))
     hist = df.n_tokens.hist()

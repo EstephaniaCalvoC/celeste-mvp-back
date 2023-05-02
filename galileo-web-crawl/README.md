@@ -5,13 +5,8 @@ This is a Python 3.9 web crawler that allows you to scrape the text from web pag
 ## How to Use
 To use the web crawler, you will need to follow these steps:
 
-1. Clone the repository to your local machine.
-2. Install the required Python packages
-
-	`pip install -r requirements.txt`
-
-3. Open a command prompt and navigate to the cloned repository directory.
-4. Run the crawl.py script with the following parameters:
+1. Open a command prompt and navigate to the cloned repository, and go inside web_crawl directory.
+1. Run the crawl.py script with the following parameters:
 
 	`./crawl.py full_url all_levels level`
 
@@ -24,9 +19,3 @@ The crawler will output the number of pages it is processing, and will save the 
 **Note:** the crawler will skip pages that require JavaScript to run, and will not follow links to pages that contain the word "edit" or a "#" character in the URL.
 
 That's it! You can now use the web crawler to scrape text from web pages within a specified domain.
-
-
-
-
-
-

@@ -165,12 +165,14 @@ def crawl(url: str, all_levels: bool = False, level: int = 3) -> None:
     queue = deque(bill_payment_pages)
 
     seen = set(bill_payment_pages)
+    
+    text_path = os.getenv("TEXTS_PATH")
 
-    if not os.path.exists("text/"):
-            os.mkdir("text/")
+    if not os.path.exists(text_path):
+            os.mkdir(text_path)
 
-    if not os.path.exists("text/"+local_domain+"/"):
-            os.mkdir("text/" + local_domain + "/")
+    if not os.path.exists(text_path+local_domain+"/"):
+            os.mkdir(text_path + local_domain + "/")
 
     if not os.path.exists("processed"):
             os.mkdir("processed")
@@ -179,7 +181,7 @@ def crawl(url: str, all_levels: bool = False, level: int = 3) -> None:
 
         url = queue.pop()
 
-        with open('text/'+local_domain+'/'+url[8:].replace("/", "_") + ".txt", "w", encoding="UTF-8") as f:
+        with open(text_path + local_domain + '/' + url[8:].replace("/", "_") + ".txt", "w", encoding="UTF-8") as f:
 
             soup = BeautifulSoup(requests.get(url).text, "html.parser")
 

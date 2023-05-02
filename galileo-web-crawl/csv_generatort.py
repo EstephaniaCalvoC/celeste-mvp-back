@@ -43,7 +43,7 @@ def create_csv_file(texts: List) -> None:
     df = pd.DataFrame(texts, columns = ['fname', 'text'])
     
     df['text'] = df.fname + ". " + remove_newlines(df.text)
-    df.to_csv(os.getenv("PROCESSED_TEXTS_DIRECTORY"))
+    df.to_csv(os.getenv("PROCESSED_TEXTS_DIRECTORY" + "scraped.csv"))
     df.head()
 
 
