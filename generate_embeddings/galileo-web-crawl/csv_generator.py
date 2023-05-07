@@ -5,10 +5,11 @@ import pandas as pd
 from pandas.core.series import Series
 
 
-def get_texts(texts_path: str) -> List:
+def get_texts(texts_path: str, domain_len: int) -> List:
     """
     Get a list of text files from a given directory and return the file names and their contents as a list of tuples.
     :param texts_path: The path to the directory containing the text files
+    :param domain_len: Number of characters in the domain
     :return: A list of tuples containing the filename and the raw text from each file
     """
     texts=[]
@@ -16,7 +17,7 @@ def get_texts(texts_path: str) -> List:
     for file in os.listdir(texts_path + "/"):
         with open(texts_path + "/" + file, "r", encoding="UTF-8") as f:
             text = f.read()
-            texts.append((file[len(texts_path):-4].replace('-',' ').replace('_', ' ').replace('#update',''), text))
+            texts.append((file[domain_len + 1:-4].replace('-',' ').replace('_', ' ').replace('#update',''), text))
     
     return texts
 
@@ -43,7 +44,7 @@ def create_csv_file(texts: List) -> None:
     df = pd.DataFrame(texts, columns = ['fname', 'text'])
     
     df['text'] = df.fname + ". " + remove_newlines(df.text)
-    df.to_csv(os.getenv("PROCESSED_TEXTS_DIRECTORY" + "scraped.csv"))
+    df.to_csv(os.getenv("PROCESSED_TEXTS_DIRECTORY")  + "scraped.csv")
     df.head()
 
 
@@ -51,8 +52,9 @@ def main():
     """
     The main function that runs the text processing script.
     """
-    text_directory_path = os.getenv("TEXTS_PATH") + os.getenv("DOMINE")
-    texts = get_texts(text_directory_path)
+    domain = os.getenv("DOMINE")
+    text_directory_path = os.getenv("TEXTS_PATH") + domain
+    texts = get_texts(text_directory_path, len(domain))
     create_csv_file(texts)
     
 

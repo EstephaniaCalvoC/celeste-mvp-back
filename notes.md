@@ -24,3 +24,8 @@ pip install --upgrade setuptools
 If you want to fix this warning message, you can try enabling the '--use-pep517' option as suggested by pip¹. Alternatively, you can try upgrading pip to version 23.1 or later which will enforce this behavior change¹. 
 
 pip install --use-pep517 <package-name>
+
+
+## Getting text from article issue
+
+Most of the texts for the enpoint pages were added manually. It could be because the format tag and the request and response examples are crated dinamically.

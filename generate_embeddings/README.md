@@ -1,9 +1,4 @@
-# celeste-mvp-back
-Celeste chat bot's backend
-
-# Set up
-
-**Note**: If you don't have a csv file with the embeddings, please follow the [generate embeddings guide](./generate_embeddings/README.md)
+# Generate Embeddings 
 
 ## Setup
 
@@ -15,6 +10,7 @@ To use the web crawler, you will need to follow these steps:
 	python3.10 -m venv
     source venv/bin/activate
 	```
+1. Go to generate_embeddings directory
 1. Install setuptools
 
 	```bash
@@ -28,11 +24,8 @@ To use the web crawler, you will need to follow these steps:
 
 1. Set the enviroment variables: `source .env.sh`
 
-# How to use
 
-TODO:
+## How to Use
 
-1. Create Q/A system.
-2. Add logs
-3. Clean requirements for generate_embeddings
-4. Improve doc strings
+1. [Crawl the website](./galileo-web-crawl/README.md)
+1. [Get the embeddings](./embeddings/README.md)

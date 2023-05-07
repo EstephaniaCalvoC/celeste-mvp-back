@@ -40,7 +40,7 @@ class HyperlinkParser(HTMLParser):
             self.inside_article_tag = True
             return
         
-        if tag == "section" and "class" in attrs and attrs["class"] == "Sidebar1t2G1ZJq-vU1 rm-Sidebar hub-sidebar-content":
+        if tag == "nav":
             self.skip_tag = True
             return
         
@@ -50,7 +50,7 @@ class HyperlinkParser(HTMLParser):
         Method called by the HTML parser when an end tag is encountered.
         Resets the inside_article_tag and skip_tag attributes if certain tags are encountered.
         """
-        if tag == "section" and self.skip_tag:
+        if tag == "nav" and self.skip_tag:
             self.skip_tag = False
             
         if tag == "article":
@@ -145,6 +145,23 @@ def get_domain_hyperlinks(local_domain: str, url: str, level: int = 1, clean_lin
 
     return list(set(clean_links))
 
+def write_text(text_path, local_domain, url):
+    with open(text_path + local_domain + '/' + url[8:].replace("/", "_") + ".txt", "w", encoding="UTF-8") as f:
+            soup = BeautifulSoup(requests.get(url).text, "html.parser")
+            markdown_divs = soup.find_all("article")
+            for div in markdown_divs:
+                text = div.get_text()
+                f.write(text)
+    # with open(text_path + local_domain + '/' + url[8:].replace("/", "_") + ".txt", "w", encoding="UTF-8") as f:
+
+    #         soup = BeautifulSoup(requests.get(url).text, "html.parser")
+
+    #         text = soup.get_text()
+
+    #         if ("You need to enable JavaScript to run this app." in text):
+    #             print("Unable to parse page " + url + " due to JavaScript being required")
+            
+    #         f.write(text)
 
 def crawl(url: str, all_levels: bool = False, level: int = 3) -> None:
     """
@@ -173,24 +190,17 @@ def crawl(url: str, all_levels: bool = False, level: int = 3) -> None:
 
     if not os.path.exists(text_path+local_domain+"/"):
             os.mkdir(text_path + local_domain + "/")
+            
+    processed_path = os.getenv("PROCESSED_TEXTS_DIRECTORY")
 
-    if not os.path.exists("processed"):
-            os.mkdir("processed")
+    if not os.path.exists(processed_path):
+            os.mkdir(processed_path)
 
     while queue:
 
         url = queue.pop()
 
-        with open(text_path + local_domain + '/' + url[8:].replace("/", "_") + ".txt", "w", encoding="UTF-8") as f:
-
-            soup = BeautifulSoup(requests.get(url).text, "html.parser")
-
-            text = soup.get_text()
-
-            if ("You need to enable JavaScript to run this app." in text):
-                print("Unable to parse page " + url + " due to JavaScript being required")
-            
-            f.write(text)
+        write_text(text_path, local_domain, url)
             
         if all_levels:
             for link in get_domain_hyperlinks(local_domain, url):
